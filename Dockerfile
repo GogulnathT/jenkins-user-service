@@ -1,6 +1,6 @@
 FROM amazoncorretto:17-alpine3.13
 
-WORKDIR /gogul/workspace
+WORKDIR /7000031725/workspace
 
 COPY target/users-service-0.0.1-SNAPSHOT.jar ./app.jar
 
