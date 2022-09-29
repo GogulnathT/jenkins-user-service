@@ -59,6 +59,9 @@ pipeline {
         		withDockerRegistry( [credentialsId : 'docker_creds_gogul', url: '']) {
         		sh "docker push ${DOCKER_REPO}/${DOCKER_IMG_NAME}:latest"
         		sh "docker push ${DOCKER_REPO}/${DOCKER_IMG_NAME}:${env.BUILD_ID}"
+        		}
+        	}
+        }
 }
 
 	post{
