@@ -2,8 +2,10 @@ pipeline {
     agent any
     
     environment {
-    	DOCKER_IMG_NAME = "user-serivce"
+    	DOCKER_IMG_NAME = "user-service"
     	DOCKER_TMP_CONTAINER_NAME = "tmp-user-service-container"
+    	DOCKER_REPO = 'gogul611'
+    	
     }
 
     stages {
@@ -36,9 +38,11 @@ pipeline {
         
         stage('dockersize'){
         steps{
-        sh "docker build -t ${DOCKER_IMG_NAME}:latest -t ${DOCKER_IMG_NAME}:${env.BUILD_ID} ."
+        sh "docker build -t ${DOCKER_REPO}/${DOCKER_IMG_NAME}:latest -t ${DOCKER_REPO}/${DOCKER_IMG_NAME}:${env.BUILD_ID} ."
         }}
         
+        
+        /*
 		stage('integration'){
         steps{
         echo 'running the tmp-user-service-container for integration testing....'
@@ -46,12 +50,21 @@ pipeline {
         sleep 30
         sh 'curl -i http://localhost:7070/api/users'
         }}
+        */
+        
+        
+        
+        stage('docker publish') {
+        	steps {
+        		withDockerRegistry( [credentialsId : 'docker_creds_gogul', url: '']) {
+        		sh "docker push ${DOCKER_REPO}/${DOCKER_IMG_NAME}:latest"
+        		sh "docker push ${DOCKER_REPO}/${DOCKER_IMG_NAME}:${env.BUILD_ID}"
 }
 
 	post{
 		always {
 			sh 'docker stop tmp-user-service-container'
-			sh "docker rmi ${DOCKER_IMG_NAME}:latest ${DOCKER_IMG_NAME}:${env.BUILD_ID}"
+			sh "docker rmi ${DOCKER_REPO}/${DOCKER_IMG_NAME}:latest ${DOCKER_IMG_NAME}:${env.BUILD_ID}"
 			}
 		}
 }
